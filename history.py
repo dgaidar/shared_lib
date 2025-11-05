@@ -1,5 +1,6 @@
 from os import path
 import json
+from pathlib import Path
 
 
 class History:
@@ -18,6 +19,9 @@ class History:
 
     def save(self):
         """Dump to file"""
+        parent = Path(self.history_file).parent
+        if not parent.is_dir():
+            parent.mkdir()
         with open(self.history_file, "w") as file:
             json.dump(self.values, file)
 

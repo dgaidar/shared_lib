@@ -3,12 +3,12 @@ Convert pdf file to images (one per page)
 '''
 import tkinter as tk
 from tkinter import ttk, StringVar
-from lib.history import History
-from gui.widget_select_file import WidgetSelectFile
+from shared_lib.history import History
+from shared_lib.gui.widget_select_file import WidgetSelectFile
 from gui.widget_run import WidgetRun
 from PIL import Image, ImageTk
 import os
-from lib.img_process import pdf_to_png
+from shared_lib.img_process import pdf_to_png
 
 
 class WidgetPreviewFolder(tk.Frame):

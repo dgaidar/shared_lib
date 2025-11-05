@@ -3,12 +3,12 @@ from PIL import Image, ImageTk
 import os
 import platform
 import subprocess
-from lib.error import Error
+from shared_lib.gui.error import Error
 
 
 def get_icon_open_folder():
     """Get 'Open Folder' icon"""
-    ICON_OPEN_FOLDER_PATH = "icons/OpenFolder.png"
+    ICON_OPEN_FOLDER_PATH = "shared_lib/icons/OpenFolder.png"
     # Load and resize
     img = Image.open(ICON_OPEN_FOLDER_PATH)
     img = img.resize((24, 24), Image.LANCZOS)  # precise resize

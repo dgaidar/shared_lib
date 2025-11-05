@@ -1,7 +1,7 @@
 import cv2
 import numpy as np
 from PIL import Image, ImageDraw, ImageFont
-from lib.textbox import wrap_text
+from .textbox import wrap_text
 '''im_pil = Image.fromarray(img)
 
 # For reversing the operation:

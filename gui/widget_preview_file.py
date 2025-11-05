@@ -2,7 +2,7 @@ import tkinter as tk
 from tkinter.scrolledtext import ScrolledText
 from PIL import Image, ImageTk
 from pdf2image import convert_from_path
-from gui.zoomable_canvas import ZoomableCanvas
+from shared_lib.gui.zoomable_canvas import ZoomableCanvas
 from pathlib import Path
 
 

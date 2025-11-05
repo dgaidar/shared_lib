@@ -1,8 +1,8 @@
 import tkinter as tk
 from tkinter import filedialog, ttk
 from pathlib import Path
-from gui.button_open_folder import ButtonOpenFolder
-from lib.error import Error
+from shared_lib.gui.button_open_folder import ButtonOpenFolder
+from shared_lib.gui.error import Error
 
 class WidgetSelectFile(tk.Frame):
 
