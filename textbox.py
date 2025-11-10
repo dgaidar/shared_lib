@@ -30,6 +30,13 @@ def wrap_text(text, font, max_width):
 
 class TextBox:
     def __init__(self, text, location, color, font_name, font_size, font_type='', align='left'):
+        """Init the structure
+
+        Args:
+            text(str):
+            location(tuple(x,y,w,h)):
+            color(tuple(r,g,b)):
+        """
         self.text = text
         self.location = location
         self.color = color
@@ -63,5 +70,3 @@ class TextBox:
         else:
             f"Font size was decreased from {size_original} to {font_size}"
         return wrapped_lines, font_size
-
-

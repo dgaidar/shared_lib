@@ -25,7 +25,7 @@ class FontManager:
         filename = font_name
         if len(font_type):
             filename = f'{filename} {font_type}'
-        font_path = Path(f'fonts/{font_name}/') / f'{filename}.ttf'
+        font_path = Path(f'shared_lib/fonts/{font_name}/') / f'{filename}.ttf'
 
         return font_path
 
