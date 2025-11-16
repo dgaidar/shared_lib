@@ -19,7 +19,10 @@ class FileContentHash:
 
 
 class ImageInfo:
+    MIN_CANVAS_HEIGHT = 5
+    MIN_CANVAS_WIDTH = 5
     img_cache = {}
+
     def __init__(self, canvas, path=None):
         self.canvas = canvas
         self.img_original = None
@@ -32,22 +35,35 @@ class ImageInfo:
         if path:
             self.load_to_canvas(path)
 
+    def __contains__(self, coord):
+        image_x, image_y = self.canvas.coords(self.image_id)
+        image_w = self.display_image.width()
+        image_h = self.display_image.height()
+        return (image_x <= coord[0] <= image_x + image_w) and (image_y <= coord[1] <= image_y + image_h)
+
+    def copy(self):
+        img = ImageInfo(self.canvas)
+        img.img_original = self.img_original
+        img.img_scale = self.img_scale
+        img.sample = self.sample
+        img.sample_scale = self.sample_scale
+
+        return img
+
     def canvas_size(self):
-        MIN_HEIGHT = MIN_WIDTH = 5
         w = self.canvas.winfo_width()
         h = self.canvas.winfo_height()
-        if h < MIN_HEIGHT or w < MIN_WIDTH:
+        if h < self.MIN_CANVAS_HEIGHT or w < self.MIN_CANVAS_WIDTH:
             raise RuntimeError(f"Canvas size too small ({w=}, {h=}). Did you draw it?")
         return w, h
 
     def calc_scale(self, img):
         canvas_w, canvas_h = self.canvas_size()
-        img_w, img_h = img.width, img.width
-        if img_w == 0 or img_h == 0:
+        if img.width == 0 or img.height == 0:
             return 1.0  # Avoid division by zero
         else:
-            scale_w = canvas_w / img_w
-            scale_h = canvas_h / img_h
+            scale_w = canvas_w / img.width
+            scale_h = canvas_h / img.height
             return min(scale_w, scale_h)
 
     def load_to_canvas(self, path):
@@ -71,7 +87,12 @@ class ImageInfo:
         self.image_id = self.canvas.create_image(0, 0, image=self.display_image, anchor="nw")
 
     def resize(self, scale):
-        """Resize the image"""
+        """
+        Resize the image
+
+        Args:
+            scale(float): Zoom scale relative to self.sample image
+        """
         self.sample_scale = scale
         new_w = int(self.sample.width * scale)
         new_h = int(self.sample.height * scale)

@@ -20,9 +20,9 @@ class WidgetPreviewFile(tk.Frame):
     def __init__(self, parent, path_history, zoom_min=None, zoom_max=None, **kwargs):
         """Panel with preview widgets"""
         if zoom_max:
-            self.zoom_max = zoom_max
+            self.ZOOM_MAX = zoom_max
         if zoom_min:
-            self.zoom_min = zoom_min
+            self.ZOOM_MIN = zoom_min
         kwargs.setdefault("bd", 2)
         kwargs.setdefault("relief", "solid")
         super().__init__(parent, **kwargs)
@@ -65,7 +65,7 @@ class WidgetPreviewFile(tk.Frame):
 
         # Slider: horizontal zoom
         self.zoom_control.slider = tk.Scale(
-            self.zoom_control, from_=self.zoom_min, to=self.zoom_max, resolution=0.01,
+            self.zoom_control, from_=self.ZOOM_MIN, to=self.ZOOM_MAX, resolution=0.01,
             orient="horizontal", length=200,
             showvalue=True,
             command=self.slider_changed

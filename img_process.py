@@ -426,3 +426,28 @@ def resize_and_crop(img: Image.Image, size: tuple[int, int]) -> Image.Image:
     # Resize to target size
     img_resized = img_cropped.resize((target_w, target_h), Image.LANCZOS)
     return img_resized
+
+def img_merge(img1: Image, img2: Image, x: int, y: int) -> Image:
+    """
+    Places img2 on top of img1 at position (x, y) and returns a new merged Image.
+
+    Args:
+        img1 (Image): Base image.
+        img2 (Image): Image to overlay on top of img1.
+        x (int): X-coordinate (pixels from left).
+        y (int): Y-coordinate (pixels from top).
+
+    Returns:
+        Image: A new PIL Image with img2 placed on top of img1.
+    """
+    # Ensure both images have alpha channels for transparency
+    img1 = img1.convert("RGBA")
+    img2 = img2.convert("RGBA")
+
+    # Make a copy so the original img1 is not modified
+    merged = img1.copy()
+
+    # Paste img2 on top of img1, using img2's alpha channel as mask
+    merged.paste(img2, (x, y), mask=img2)
+
+    return merged
