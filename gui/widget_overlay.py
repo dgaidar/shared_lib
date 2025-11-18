@@ -24,13 +24,22 @@ class WidgetOverlay(tk.Frame):
 
         self.overlays = []
 
-        # Mouse drag/scale tracking
-        self.drag = {"x": 0, "y": 0}
-        self.is_dragging = False
-
         self.background = WidgetPreviewFile(self, "history/merge_src.json")
         self.background.grid(row=0, rowspan=3, column=0, padx=5, pady=5, sticky="snew")
-        self.background.canvas.bind("<MouseWheel>", self.on_scroll)
+        def get_images(event):
+            (x, y) = (event.x, event.y)
+            images = []
+            for img in self.overlays:
+                if (x, y) in img:
+                    images.append(img)
+
+            # We move/scale either a single image or all images
+            if len(images) == 0 or len(images) > 1:
+                images = [img for img in self.overlays]
+                images.append(self.background.canvas.image)
+            return images
+        self.background.canvas.get_images = get_images
+
 
         self.overlay = WidgetPreviewFile(self, "history/merge_from.json")
         self.overlay.grid(row=0, rowspan=3, column=2, padx=5, pady=5, sticky="snew")
@@ -80,52 +89,6 @@ class WidgetOverlay(tk.Frame):
 
             Error.show(f"Don't know what image you want to delete."
                        f"\nPlease set it on the right panel")
-
-        # === Drag behavior ===
-
-    def start_drag(self, event):
-        if not self.overlay.canvas.image.image_id:
-            return
-        self.is_dragging = True
-        self.drag["x"] = event.x
-        self.drag["y"] = event.y
-
-    def on_drag(self, event):
-        Error.show("aaa")
-        if not self.is_dragging or not self.overlay.canvas.image.image_id:
-            return
-
-        dx = event.x - self.drag["x"]
-        dy = event.y - self.drag["y"]
-        self.drag["x"], self.drag["y"] = event.x, event.y
-        self.background.canvas.move(self.overlay.canvas.image.image_id, dx, dy)
-
-        # === Scroll scaling ===
-
-    def on_scroll(self, event):
-        img_background = self.background.canvas.image
-        if not img_background.image_id:
-            return
-
-        # Determine scroll direction
-        if event.num == 5 or event.delta < 0:
-            scale_factor = 0.9
-        else:
-            scale_factor = 1.1
-
-        for img in self.overlays:
-            x, y = self.background.canvas.coords(img.image_id)
-            w = img.display_image.width()
-            h = img.display_image.height()
-
-            if (event.x, event.y) in img:
-                scale = img.sample_scale * scale_factor
-                img.resize(scale)
-                return
-        for img in self.overlays:
-            img.resize(img.sample_scale * scale_factor)
-        img_background.resize(img_background.sample_scale * scale_factor)
-
 
     @staticmethod
     def check_folder(path):

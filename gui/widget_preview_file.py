@@ -45,11 +45,6 @@ class WidgetPreviewFile(tk.Frame):
         self.make_zoom_control()
         self.zoom_control.grid(row=2, column=0, padx=5, pady=5, sticky="s")
 
-        # Canvas: Mouse wheel movement (zoom in/out)
-        self.canvas.bind("<MouseWheel>", self.on_zoom)  # Windows
-        self.canvas.bind("<Button-4>", self.on_zoom)  # Linux scroll up
-        self.canvas.bind("<Button-5>", self.on_zoom)  # Linux scroll down
-
         # File select: src file is choosen
         self.file_select.var_path.trace_add("write", self.load)  # fires on .set() or user change
 
@@ -72,35 +67,18 @@ class WidgetPreviewFile(tk.Frame):
         )
         self.zoom_control.slider.grid(row=0, column=1, padx=5, pady=5, sticky="nse")
 
-    def apply_limits(self, scale):
-        """Check that the current scale is inside min/max borders. If not - fix it"""
-        if scale < self.ZOOM_MIN:
-            return self.ZOOM_MIN
-        if scale > self.ZOOM_MAX:
-            return self.ZOOM_MAX
-        return scale
+        # Update slider after zoom
+        self.canvas.bind("<MouseWheel>", self.update_slider, add="+")  # Windows
+        self.canvas.bind("<Button-4>", self.update_slider, add="+")  # Linux scroll up
+        self.canvas.bind("<Button-5>", self.update_slider, add="+")  # Linux scroll down
 
-    def on_zoom(self, event):
+    def update_slider(self, event):
         """Increase or decrease image size"""
-        if not self.canvas.image.img_original:
+        scale = self.canvas.image.sample_scale
+        if not scale:
             return
 
-        # Determine zoom direction
-        if event.num == 5 or event.delta < 0:
-            self.canvas.image.sample_scale /= 1.1  # zoom out
-        elif event.num == 4 or event.delta > 0:
-            self.canvas.image.sample_scale *= 1.1  # zoom in
-
-        # Clamp scale
-        scale = self.apply_limits(self.canvas.image.sample_scale)
-        self.canvas.image.sample_scale = scale
         self.zoom_control.slider.set(scale)
-
-        # Resize and update image
-        self.canvas.image.resize(scale)
-
-        # Keep top-left corner fixed
-        self.canvas.config(scrollregion=self.bbox("all"))
 
     def zoom_full(self):
         """Draw the image on canvas (max size, the whole image is visible)"""

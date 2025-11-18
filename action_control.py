@@ -55,11 +55,11 @@ class CanvasAction(ActionControl):
         # TODO:
         #dx, dy = self.restrict_drag(dx, dy)
         canvas = self.master
-        image = canvas.get_images(event)[0]
-        self.master.move(image.image_id, dx, dy)
+        for image in canvas.get_images(event):
+            self.master.move(image.image_id, dx, dy)
 
-        # Keep the image within bounds
-        #self.keep_image_in_bounds()
+            # Keep the image within bounds
+            #self.keep_image_in_bounds()
 
     def keep_image_in_bounds(self, image):
         """Ensure the image never leaves the visible canvas area."""
@@ -85,24 +85,24 @@ class CanvasAction(ActionControl):
         """Increase or decrease image size"""
         self.name = "scroll"
         canvas = self.master
-        image = canvas.get_images(event)[0]
-        if not image.sample:
-            return
+        for image in canvas.get_images(event):
+            if not image.sample:
+                return
 
-        # Determine zoom direction
-        if event.num == 5 or event.delta < 0:
-            scale = image.sample_scale / 1.1  # zoom out
-        elif event.num == 4 or event.delta > 0:
-            scale = image.sample_scale * 1.1  # zoom in
+            # Determine zoom direction
+            if event.num == 5 or event.delta < 0:
+                scale = image.sample_scale / 1.1  # zoom out
+            elif event.num == 4 or event.delta > 0:
+                scale = image.sample_scale * 1.1  # zoom in
 
-        # Clamp scale
-        scale = self.apply_limits(scale)
+            # Clamp scale
+            scale = self.apply_limits(scale)
 
-        # Resize and update image
-        image.resize(scale)
+            # Resize and update image
+            image.resize(scale)
 
-        # Keep top-left corner fixed
-        canvas.config(scrollregion=canvas.bbox("all"))
+            # Keep top-left corner fixed
+            canvas.config(scrollregion=canvas.bbox("all"))
 
     # TODO: refactor!
     def apply_limits(self, scale):
@@ -119,26 +119,26 @@ class CanvasAction(ActionControl):
         Triggered on <Configure> (resize) event.
         """
         self.name = "resize"
-        image = self.master.get_images(event)[0]
-        if not image.sample:
-            # Nothing shown
-            return
+        for image in self.master.get_images(event):
+            if not image.sample:
+                # Nothing shown
+                return
 
-        # Get new canvas size
-        canvas_w = event.width
-        canvas_h = event.height
+            # Get new canvas size
+            canvas_w = event.width
+            canvas_h = event.height
 
-        # Original image size
-        orig_w, orig_h = image.sample.size
+            # Original image size
+            orig_w, orig_h = image.sample.size
 
-        # Compute minimum scale so image covers canvas completely
-        scale_w = canvas_w / orig_w
-        scale_h = canvas_h / orig_h
-        new_scale = min(scale_w, scale_h)  # ensures image >= canvas in both directions
+            # Compute minimum scale so image covers canvas completely
+            scale_w = canvas_w / orig_w
+            scale_h = canvas_h / orig_h
+            new_scale = min(scale_w, scale_h)  # ensures image >= canvas in both directions
 
-        # Update only if scale changed significantly (optional optimization)
-        if abs(new_scale - image.sample_scale) < 0.01:
-            return
+            # Update only if scale changed significantly (optional optimization)
+            if abs(new_scale - image.sample_scale) < 0.01:
+                return
 
-        image.resize(new_scale)
+            image.resize(new_scale)
 

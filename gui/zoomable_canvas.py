@@ -31,11 +31,8 @@ class ZoomableCanvas(tk.Canvas):
     def get_images(self, event):
         return [self.image]
 
-    def clear(self):
-        self.delete("all")
-
     def load(self, path):
         """Load image from file"""
-        self.clear()
+        self.delete("all")
         self.image.load_to_canvas(path)
         self.grid()
