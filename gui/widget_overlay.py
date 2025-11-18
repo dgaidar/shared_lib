@@ -6,6 +6,7 @@ from shared_lib.img_process import resize_and_crop
 from shared_lib.gui.widget_preview_file import WidgetPreviewFile
 import os
 from PIL import Image, ImageTk
+from shared_lib.gui.error import Error
 
 
 class WidgetOverlay(tk.Frame):
@@ -57,7 +58,7 @@ class WidgetOverlay(tk.Frame):
             img2.display_image.width() // 2,
             img2.display_image.height() // 2,
             image=img2.display_image,
-            anchor="center"
+            anchor="nw"
         )
         img2.canvas.itemconfig(img2.image_id, image=img2.display_image)
 
@@ -65,11 +66,20 @@ class WidgetOverlay(tk.Frame):
         img2.canvas.tag_raise(img2.image_id, img1.image_id)
 
     def remove_overlay(self):
-        if self.overlay.canvas.image.image_id:
-            self.background.canvas.delete(self.overlay.canvas.image.image_id)
-            self.overlay.canvas.image.image_id = None
-            self.overlay_tk = None
-            self.overlay_scale = 1.0
+        if len(self.overlays) == 1:
+            self.background.canvas.delete(self.overlays[0].image_id)
+            self.overlays.pop()
+        else:
+            # What image should we remove?
+            path = self.overlay.file_select.get_path()
+            for i, img in enumerate(self.overlays):
+                if img.path == path:
+                    self.background.canvas.delete(img.image_id)
+                    self.overlays.pop(i)
+                    return
+
+            Error.show(f"Don't know what image you want to delete."
+                       f"\nPlease set it on the right panel")
 
         # === Drag behavior ===
 
@@ -81,6 +91,7 @@ class WidgetOverlay(tk.Frame):
         self.drag["y"] = event.y
 
     def on_drag(self, event):
+        Error.show("aaa")
         if not self.is_dragging or not self.overlay.canvas.image.image_id:
             return
 

@@ -25,6 +25,7 @@ class ImageInfo:
 
     def __init__(self, canvas, path=None):
         self.canvas = canvas
+        self.path = path
         self.img_original = None
         self.img_scale = 1
         self.sample = None
@@ -42,7 +43,7 @@ class ImageInfo:
         return (image_x <= coord[0] <= image_x + image_w) and (image_y <= coord[1] <= image_y + image_h)
 
     def copy(self):
-        img = ImageInfo(self.canvas)
+        img = ImageInfo(self.canvas, self.path)
         img.img_original = self.img_original
         img.img_scale = self.img_scale
         img.sample = self.sample
@@ -84,7 +85,9 @@ class ImageInfo:
 
         # Display image
         self.display_image = ImageTk.PhotoImage(self.sample)
-        self.image_id = self.canvas.create_image(0, 0, image=self.display_image, anchor="nw")
+        self.image_id = self.canvas.create_image(0, 0,
+                                                 image=self.display_image,
+                                                 anchor="nw")
 
     def resize(self, scale):
         """
