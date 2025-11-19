@@ -11,8 +11,6 @@ from shared_lib.gui.error import Error
 
 class WidgetOverlay(tk.Frame):
     def __init__(self, parent, **kwargs):
-        kwargs.setdefault("bd", 2)
-        kwargs.setdefault("relief", "solid")
         super().__init__(parent, **kwargs)
 
         self.rowconfigure(0, weight=1)
@@ -22,7 +20,7 @@ class WidgetOverlay(tk.Frame):
         self.columnconfigure(1, weight=0)
         self.columnconfigure(2, weight=0)
 
-        self.overlays = []
+        self.overlays = []  # List[ImageInfo]
 
         self.background = WidgetPreviewFile(self, "history/merge_src.json")
         self.background.grid(row=0, rowspan=3, column=0, padx=5, pady=5, sticky="snew")
@@ -55,7 +53,6 @@ class WidgetOverlay(tk.Frame):
 
     # === Add overlay image ===
     def add_overlay(self):
-    #def draw_img2_on_img1(self):
         img1 = self.background.canvas.image
         img2 = self.overlay.canvas.image.copy()
 
@@ -101,17 +98,3 @@ class WidgetOverlay(tk.Frame):
             raise RuntimeError(F"Path '{path}' doesn't exist")
         if not os.path.isdir(path):
             raise RuntimeError(F"Path '{path}' not a folder")
-
-    def run(self):
-        new_size = self.settings.get_size()
-        src = self.panel_src_file.var_path.get()
-        dst = self.panel_dst_folder.var_path.get()
-        self.check_folder(dst)
-        for fname in os.listdir(src):
-            fpath = os.path.join(src, fname)
-            if fpath in self.background.canvas.path2image:
-                img = self.background.canvas.path2image[fpath]
-                resized = resize_and_crop(img, new_size)
-                resized.save(os.path.join(dst, fname))
-
-

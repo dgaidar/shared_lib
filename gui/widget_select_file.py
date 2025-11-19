@@ -22,7 +22,6 @@ class WidgetSelectFile(tk.Frame):
         if text is None:
             text = "Folder:" if is_folder else "File:"
         self.label = tk.Label(self, text=text)
-#        self.pack(fill="both", expand=True)
         self.columnconfigure(0, weight=0)
         self.columnconfigure(1, weight=1)
         self.columnconfigure(0, weight=0)
