@@ -26,7 +26,10 @@ class WidgetOverlay(tk.Frame):
 
         self.background = WidgetPreviewFile(self, "history/merge_src.json")
         self.background.grid(row=0, rowspan=3, column=0, padx=5, pady=5, sticky="snew")
-        def get_images(event):
+        def get_images(event=None):
+            if not event:
+                images = [self.background.canvas.image] + self.overlays
+                return images
             (x, y) = (event.x, event.y)
             images = []
             for img in self.overlays:

@@ -28,7 +28,7 @@ class ZoomableCanvas(tk.Canvas):
         # Load image
         self.image = ImageInfo(self)
 
-    def get_images(self, event):
+    def get_images(self, *args, **kwargs):
         return [self.image]
 
     def load(self, path):
