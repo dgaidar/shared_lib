@@ -451,3 +451,26 @@ def img_merge(img1: Image, img2: Image, x: int, y: int) -> Image:
     merged.paste(img2, (x, y), mask=img2)
 
     return merged
+
+def img_paste(img1: Image, img2: Image, x: int, y: int, w: int=None, h: int = None) -> Image:
+    """
+    Places img2 on top of img1 at position (x, y) and returns a new merged Image.
+
+    Args:
+        img1 (Image): Base image.
+        img2 (Image): Image to overlay on top of img1.
+        x (int): X-coordinate (pixels from left).
+        y (int): Y-coordinate (pixels from top).
+        w (int): If provided, resize img2 in order to match new width.
+        h (int): If provided, resize img2 in order to match new height.
+
+    Returns:
+        None - img1 is changed
+    """
+    # Ensure both images have alpha channels for transparency
+    img2 = img2.convert("RGBA")
+    if h and w:
+        img2 = img2.resize((w, h))
+
+    # Paste img2 on top of img1, using img2's alpha channel as mask
+    img1.paste(img2, (x, y), mask=img2)
